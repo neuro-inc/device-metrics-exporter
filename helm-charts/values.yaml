@@ -1,7 +1,19 @@
 platform: k8s
 
 # -- Add node selector for the daemonset of metrics exporter
-nodeSelector: {}
+nodeSelector: 
+  feature.node.kubernetes.io/amd-gpu: "true"
+
+# -- Tolerations to allow scheduling on tainted GPU nodes
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: platform.neuromation.io/job
+    operator: Exists
+    effect: NoSchedule
+  - key: "amd.com/gpu"
+    operator: Exists
+    effect: NoSchedule
 
 image:
   # -- repository URL for the metrics exporter image
@@ -24,7 +36,9 @@ service:
     port: 5000
     # -- set nodePort for NodePort type service  
     nodePort: 32500
+  labels:
+    platform.apolo.us/scrape-metrics: "true"
 
 # -- configMap name for the customizing configs and mount into metrics exporter container
-configMap: ""
+configMap: "gpu-config"
 
