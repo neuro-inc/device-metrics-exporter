@@ -2,21 +2,27 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "helm-charts-exporter.fullname" . }}-service-monitor
+  name: amd-device-metrics-exporter
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "helm-charts-exporter.labels" . | nindent 4 }}
-    {{- if .Values.serviceMonitor.labels }}
-    {{- toYaml .Values.serviceMonitor.labels | nindent 4 }}
-    {{- end }}
+    app: exporter-amdgpu-metrics-exporter
+    platform.apolo.us/scrape-metrics: "true"
+   
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: device-metrics-exporter-charts
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
   endpoints:
-    - port: metrics
-      path: {{ .Values.serviceMonitor.path }}
-      interval: {{ .Values.serviceMonitor.interval }}
+    - interval: {{ .Values.serviceMonitor.interval | default "15s" }}
+      path: {{ .Values.serviceMonitor.path | default "/metrics" }}
+      port: metrics
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-amdgpu-metrics-exporter
+      # The same label your Service or DaemonSet uses
+      app: exporter-amdgpu-metrics-exporter
 {{- end }}
