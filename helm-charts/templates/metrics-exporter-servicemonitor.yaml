@@ -1,0 +1,28 @@
+{{- if and .Values.serviceMonitor.enabled (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: amd-device-metrics-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: exporter-amdgpu-metrics-exporter
+    platform.apolo.us/scrape-metrics: "true"
+   
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: device-metrics-exporter-charts
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  endpoints:
+    - interval: {{ .Values.serviceMonitor.interval | default "15s" }}
+      path: {{ .Values.serviceMonitor.path | default "/metrics" }}
+      port: metrics
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      # The same label your Service or DaemonSet uses
+      app: exporter-amdgpu-metrics-exporter
+{{- end }}
