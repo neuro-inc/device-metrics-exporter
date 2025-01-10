@@ -45,16 +45,7 @@ Notes:
 - Replace platform with your desired namespace.
 - Ensure the namespace exists or use the --create-namespace flag.
 
-
-### 4. Apply the ServiceMonitor
-
-If you're using Prometheus Operator, apply the ServiceMonitor resource to enable Prometheus to scrape metrics from the Device Metrics Exporter:
-
-```bash
-kubectl apply -f example/service-monitor.yaml
-```
-
-### 5. Verify Metrics in Prometheus
+### 4. Verify Metrics in Prometheus
 
 Forward the Prometheus service to your local machine for testing:
 
@@ -73,8 +64,7 @@ gpu_used_vram
 
 Ensure metrics are being collected from the exporter pods.
 
-
-### 6. Import Grafana Dashboards
+### 5. Import Grafana Dashboards
 
 The repository includes pre-built Grafana dashboards. Import these into your Grafana instance:
 

@@ -42,3 +42,8 @@ service:
 # -- configMap name for the customizing configs and mount into metrics exporter container
 configMap: "gpu-config"
 
+serviceMonitor:
+  enabled: true
+  interval: 15s
+  path: /metrics
+  labels: {}
